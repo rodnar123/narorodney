@@ -3,6 +3,12 @@
  * Measures and reports Core Web Vitals metrics
  */
 
+// Type definitions for window analytics
+interface WindowWithAnalytics extends Window {
+  gtag?: (...args: unknown[]) => void;
+  va?: (...args: unknown[]) => void;
+}
+
 export function reportWebVitals(metric: {
   id: string;
   name: string;
@@ -16,8 +22,9 @@ export function reportWebVitals(metric: {
 
   // Send to analytics service
   // Example: Google Analytics
-  if (typeof window !== 'undefined' && (window as any).gtag) {
-    (window as any).gtag('event', metric.name, {
+  const win = window as WindowWithAnalytics;
+  if (typeof window !== 'undefined' && win.gtag) {
+    win.gtag('event', metric.name, {
       value: Math.round(metric.name === 'CLS' ? metric.value * 1000 : metric.value),
       event_category: metric.label === 'web-vital' ? 'Web Vitals' : 'Custom Metrics',
       event_label: metric.id,
@@ -26,8 +33,8 @@ export function reportWebVitals(metric: {
   }
 
   // Send to Vercel Analytics
-  if (typeof window !== 'undefined' && (window as any).va) {
-    (window as any).va('track', metric.name, { value: metric.value });
+  if (typeof window !== 'undefined' && win.va) {
+    win.va('track', metric.name, { value: metric.value });
   }
 
   // You can also send to other analytics services here
@@ -37,14 +44,15 @@ export function reportWebVitals(metric: {
 /**
  * Custom event tracking
  */
-export function trackEvent(eventName: string, eventData?: Record<string, any>) {
+export function trackEvent(eventName: string, eventData?: Record<string, string | number | boolean>) {
   if (process.env.NODE_ENV === 'development') {
     console.log('Event:', eventName, eventData);
   }
 
   // Send to analytics
-  if (typeof window !== 'undefined' && (window as any).gtag) {
-    (window as any).gtag('event', eventName, eventData);
+  const win = window as WindowWithAnalytics;
+  if (typeof window !== 'undefined' && win.gtag) {
+    win.gtag('event', eventName, eventData);
   }
 }
 
@@ -56,8 +64,9 @@ export function trackPageView(url: string) {
     console.log('Page View:', url);
   }
 
-  if (typeof window !== 'undefined' && (window as any).gtag) {
-    (window as any).gtag('config', process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID, {
+  const win = window as WindowWithAnalytics;
+  if (typeof window !== 'undefined' && win.gtag) {
+    win.gtag('config', process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID, {
       page_path: url,
     });
   }

@@ -6,14 +6,12 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { TextPlugin } from 'gsap/TextPlugin';
 import * as THREE from 'three';
-import { Canvas, useFrame,  } from '@react-three/fiber';
-import { OrbitControls, Text, Environment, PerspectiveCamera, Float, MeshDistortMaterial, Sparkles, Stars, Cloud, Trail, Sphere,  MeshWobbleMaterial, shaderMaterial,  Edges } from '@react-three/drei';
-import { EffectComposer, Bloom, ChromaticAberration, Noise, Vignette } from '@react-three/postprocessing';
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls, Text, Environment, PerspectiveCamera, Float, MeshDistortMaterial, Sparkles, Stars, MeshWobbleMaterial, shaderMaterial, Edges } from '@react-three/drei';
+import { EffectComposer, Bloom, Noise, Vignette } from '@react-three/postprocessing';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
-
-import { Github, Linkedin, Facebook, ExternalLink, Mail,  MapPin, Code2, Sparkles as SparklesIcon, Layers, Terminal, Smartphone, Globe, Database, Cpu, Zap, Rocket, Shield, Star, ArrowRight } from 'lucide-react';
+import { Github, Linkedin, Facebook, ExternalLink, Mail, MapPin, Code2, Sparkles as SparklesIcon, Layers, Terminal, Smartphone, Globe, Database, Cpu, Zap, Rocket, Shield, ArrowRight } from 'lucide-react';
 import { extend } from '@react-three/fiber';
 import MobileMenu from '@/components/MobileMenu';
 import TiltCard from '@/components/TiltCard';
@@ -21,7 +19,6 @@ import GlassCard from '@/components/GlassCard';
 import AnimatedGradientText from '@/components/AnimatedGradientText';
 import ScrollProgress from '@/components/ScrollProgress';
 import ParticleField from '@/components/ParticleField';
-import TechSphere from '@/components/TechSphere';
 import DNAHelix from '@/components/DNAHelix';
 
 // Only register plugins on client
@@ -98,32 +95,6 @@ extend({ HolographicMaterial });
 //     </>
 //   );
 // }
-
-// Glitch text effect
-function GlitchText({ children, className = "" }: { children: string; className?: string }) {
-  const [glitched, setGlitched] = useState(false);
-  
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setGlitched(true);
-      setTimeout(() => setGlitched(false), 200);
-    }, 3000);
-    
-    return () => clearInterval(interval);
-  }, []);
-  
-  return (
-    <div className={`relative ${className}`}>
-      <span className={glitched ? "opacity-0" : ""}>{children}</span>
-      {glitched && (
-        <>
-          <span className="absolute inset-0 text-blue-500 animate-glitch-1">{children}</span>
-          <span className="absolute inset-0 text-red-500 animate-glitch-2">{children}</span>
-        </>
-      )}
-    </div>
-  );
-}
 
 // Loading screen
 function LoadingScreen({ progress }: { progress: number }) {
@@ -1212,7 +1183,7 @@ export default function Portfolio3D() {
                 <AnimatedGradientText>Get In Touch</AnimatedGradientText>
               </h2>
               <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto">
-                Let's collaborate and build something extraordinary together
+                Let&apos;s collaborate and build something extraordinary together
               </p>
             </motion.div>
 
@@ -1240,12 +1211,12 @@ export default function Portfolio3D() {
                     <div>
                       <h3 className="text-3xl sm:text-4xl font-bold mb-4">
                         <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                          Let's Build Something Amazing
+                          Let&apos;s Build Something Amazing
                         </span>
                       </h3>
                       <p className="text-gray-300 text-base sm:text-lg leading-relaxed">
-                        I'm always excited about new challenges and opportunities to create innovative solutions. 
-                        Whether you have a project in mind or just want to connect, I'd love to hear from you!
+                        I&apos;m always excited about new challenges and opportunities to create innovative solutions. 
+                        Whether you have a project in mind or just want to connect, I&apos;d love to hear from you!
                       </p>
                     </div>
 
