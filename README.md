@@ -1,36 +1,212 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🌟 Rodney Naro - Portfolio
 
-## Getting Started
+<div align="center">
+  
+  [![Next.js](https://img.shields.io/badge/Next.js-15.3.4-black?logo=next.js)](https://nextjs.org/)
+  [![React](https://img.shields.io/badge/React-19-blue?logo=react)](https://reactjs.org/)
+  [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue?logo=typescript)](https://www.typescriptlang.org/)
+  [![Three.js](https://img.shields.io/badge/Three.js-Latest-black?logo=three.js)](https://threejs.org/)
+  [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+  
+  **A stunning 3D interactive portfolio showcasing full-stack development expertise**
+  
+  [Live Demo](https://rodneynaro.vercel.app) · [Report Bug](https://github.com/rodnar123/rodneynaroprofile/issues) · [Request Feature](https://github.com/rodnar123/rodneynaroprofile/issues)
 
-First, run the development server:
+</div>
+
+---
+
+## 📋 Table of Contents
+
+- [About](#about)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Getting Started](#getting-started)
+- [Project Structure](#project-structure)
+- [Environment Variables](#environment-variables)
+- [Deployment](#deployment)
+- [Contact](#contact)
+
+---
+
+## 🎯 About
+
+This is my personal portfolio website built with cutting-edge web technologies. It features stunning 3D animations, smooth scroll interactions, and a modern, responsive design. The portfolio showcases my skills as a Full-Stack Developer specializing in TypeScript, React, React Native, and advanced web technologies.
+
+### ✨ Highlights
+
+- 🎨 **3D Graphics** - Interactive Three.js scenes with particle systems and animated geometries
+- 🚀 **Performance** - Optimized for speed with Next.js 15 and Turbopack
+- 📱 **Responsive** - Fully responsive design that works on all devices
+- ♿ **Accessible** - Built with accessibility best practices
+- 🎭 **Animations** - Smooth GSAP and Framer Motion animations
+- 🔍 **SEO Optimized** - Comprehensive meta tags and structured data
+
+---
+
+## ✨ Features
+
+- ✅ **Interactive 3D Hero Section** with floating tech spheres and DNA helix animation
+- ✅ **Project Showcase** with animated cards and GitHub integration
+- ✅ **Skills Visualization** with 3D tech stack representation
+- ✅ **Contact Section** with social media integration
+- ✅ **Smooth Scrolling** with parallax effects
+- ✅ **Loading Animation** with progress indicator
+- ✅ **Error Boundaries** for graceful error handling
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+
+- **Framework**: [Next.js 15.3.4](https://nextjs.org/) with App Router & Turbopack
+- **UI Library**: [React 19](https://reactjs.org/)
+- **Language**: [TypeScript 5](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
+- **3D Graphics**: [Three.js](https://threejs.org/) + [React Three Fiber](https://docs.pmnd.rs/react-three-fiber)
+- **Animations**: [GSAP](https://greensock.com/gsap/) & [Framer Motion](https://www.framer.com/motion/)
+- **UI Components**: [shadcn/ui](https://ui.shadcn.com/)
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 20.x or higher
+- pnpm 8.x or higher
+
+### Installation
+
+1. **Clone the repository**
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/rodnar123/rodneynaroprofile.git
+cd rodneynaroprofile
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. **Install dependencies**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. **Create environment file**
 
-## Learn More
+```bash
+cp .env.example .env.local
+```
 
-To learn more about Next.js, take a look at the following resources:
+4. **Run the development server**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+pnpm dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+5. **Open your browser**
 
-## Deploy on Vercel
+Navigate to [http://localhost:3000](http://localhost:3000)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Build for Production
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+pnpm build
+pnpm start
+```
+
+---
+
+## 📁 Project Structure
+
+```
+rodneygithub/
+├── app/                      # Next.js App Router
+│   ├── layout.tsx           # Root layout with metadata
+│   ├── page.tsx             # Home page component
+│   └── globals.css          # Global styles
+├── components/              # React components
+│   ├── ui/                  # shadcn/ui components
+│   ├── DNAHelix.tsx        # 3D DNA helix component
+│   ├── ParticleField.tsx   # Particle system component
+│   ├── TechSphere.tsx      # 3D tech sphere component
+│   └── ErrorBoundary.tsx   # Error handling component
+├── lib/                     # Utility functions
+│   ├── utils.ts            # Helper functions
+│   └── constants.ts        # App constants
+├── public/                  # Static assets
+│   └── images/
+├── .env.example            # Environment variables template
+├── next.config.ts          # Next.js configuration
+├── tsconfig.json           # TypeScript configuration
+└── package.json            # Dependencies
+```
+
+---
+
+## 🔐 Environment Variables
+
+Create a `.env.local` file based on `.env.example`:
+
+```env
+NEXT_PUBLIC_SITE_URL=https://yourdomain.com
+NEXT_PUBLIC_GITHUB_URL=https://github.com/yourusername
+NEXT_PUBLIC_LINKEDIN_URL=https://linkedin.com/in/yourprofile
+NEXT_PUBLIC_EMAIL=your.email@example.com
+```
+
+---
+
+## 🚢 Deployment
+
+### Deploy to Vercel (Recommended)
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/rodnar123/rodneynaroprofile)
+
+1. Push your code to GitHub
+2. Import your repository to Vercel
+3. Add environment variables in Vercel dashboard
+4. Deploy!
+
+---
+
+## ⚡ Performance
+
+### Optimization Strategies
+
+- ✅ **Code Splitting** - Automatic with Next.js
+- ✅ **Lazy Loading** - Suspense for 3D components
+- ✅ **Memoization** - useMemo for expensive calculations
+- ✅ **Tree Shaking** - Removing unused code
+
+---
+
+## 📧 Contact
+
+**Rodney Naro**
+
+- 🌐 Website: [rodneynaro.vercel.app](https://rodneynaro.vercel.app)
+- 💼 LinkedIn: [rodney-naro-74378062](https://www.linkedin.com/in/rodney-naro-74378062/)
+- 🐙 GitHub: [@rodnar123](https://github.com/rodnar123)
+- 📧 Email: rodney.naro@gmail.com
+- 📍 Location: PNG Unitech, Papua New Guinea
+
+---
+
+## 🙏 Acknowledgments
+
+- [Next.js](https://nextjs.org/) - The React Framework
+- [Three.js](https://threejs.org/) - 3D library
+- [GSAP](https://greensock.com/) - Animation library
+- [shadcn/ui](https://ui.shadcn.com/) - UI components
+- [Vercel](https://vercel.com/) - Hosting platform
+
+---
+
+<div align="center">
+  
+  **⭐ Star this repo if you found it helpful!**
+  
+  Made with ❤️ by [Rodney Naro](https://github.com/rodnar123)
+  
+</div>

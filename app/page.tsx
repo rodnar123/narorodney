@@ -13,8 +13,16 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 
-import { Github, Linkedin, Facebook, ExternalLink, Mail,  MapPin, Code2, Sparkles as SparklesIcon, Layers, Terminal, Smartphone, Globe, Database, Cpu, Zap, Rocket, Shield } from 'lucide-react';
+import { Github, Linkedin, Facebook, ExternalLink, Mail,  MapPin, Code2, Sparkles as SparklesIcon, Layers, Terminal, Smartphone, Globe, Database, Cpu, Zap, Rocket, Shield, Star, ArrowRight } from 'lucide-react';
 import { extend } from '@react-three/fiber';
+import MobileMenu from '@/components/MobileMenu';
+import TiltCard from '@/components/TiltCard';
+import GlassCard from '@/components/GlassCard';
+import AnimatedGradientText from '@/components/AnimatedGradientText';
+import ScrollProgress from '@/components/ScrollProgress';
+import ParticleField from '@/components/ParticleField';
+import TechSphere from '@/components/TechSphere';
+import DNAHelix from '@/components/DNAHelix';
 
 // Only register plugins on client
 if (typeof window !== 'undefined') {
@@ -91,163 +99,6 @@ extend({ HolographicMaterial });
 //   );
 // }
 
-// Particle field background
-function ParticleField() {
-  const count = 500;
-  const mesh = useRef<THREE.Points>(null);
-  
-  const [positions, colors] = useMemo(() => {
-    const positions = new Float32Array(count * 3);
-    const colors = new Float32Array(count * 3);
-    
-    // Use deterministic values instead of Math.random()
-    for (let i = 0; i < count; i++) {
-      const t = i / count;
-      const angle = t * Math.PI * 2 * 7.3;
-      
-      positions[i * 3] = (Math.sin(angle * 2.1) * 0.5 + Math.cos(angle * 3.7) * 0.5) * 50;
-      positions[i * 3 + 1] = (Math.sin(angle * 1.7) * 0.5 + Math.cos(angle * 2.9) * 0.5) * 50;
-      positions[i * 3 + 2] = (Math.sin(angle * 3.1) * 0.5 + Math.cos(angle * 1.3) * 0.5) * 50;
-      
-      colors[i * 3] = 0.5 + Math.sin(t * Math.PI * 2) * 0.5;
-      colors[i * 3 + 1] = 0.5 + Math.sin(t * Math.PI * 2 + 2) * 0.5;
-      colors[i * 3 + 2] = 0.5 + Math.sin(t * Math.PI * 2 + 4) * 0.5;
-    }
-    
-    return [positions, colors];
-  }, []);
-  
-  useFrame((state) => {
-    if (mesh.current) {
-      mesh.current.rotation.x = state.clock.elapsedTime * 0.05;
-      mesh.current.rotation.y = state.clock.elapsedTime * 0.075;
-    }
-  });
-  
-  return (
-    <points ref={mesh}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          args={[positions, 3]}
-        />
-        <bufferAttribute
-          attach="attributes-color"
-          args={[colors, 3]}
-        />
-      </bufferGeometry>
-      <pointsMaterial size={0.1} vertexColors />
-    </points>
-  );
-}
-
-// Enhanced 3D Floating Tech Sphere with trails
-function TechSphere({
-  position,
-  color,
-  scale = 1,
-  tech
-}: {
-  position: [number, number, number];
-  color: string;
-  scale?: number;
-  tech?: string;
-}) {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const [hovered, setHovered] = useState(false);
-  const [clicked, setClicked] = useState(false);
-
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.x = state.clock.elapsedTime * 0.5;
-      meshRef.current.rotation.y = state.clock.elapsedTime * 0.3;
-      
-      // Floating animation
-      meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime + position[0]) * 0.1;
-      
-      // Scale animation
-      const targetScale = clicked ? scale * 1.5 : hovered ? scale * 1.2 : scale;
-      meshRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.1);
-    }
-  });
-
-  return (
-    <group position={position}>
-      <Trail
-        width={2}
-        length={6}
-        color={new THREE.Color(color)}
-        attenuation={(t) => t * t}
-      >
-        <mesh
-          ref={meshRef}
-          onPointerOver={() => setHovered(true)}
-          onPointerOut={() => setHovered(false)}
-          onClick={() => setClicked(!clicked)}
-        >
-          <dodecahedronGeometry args={[0.5, 0]} />
-          <MeshDistortMaterial
-            color={color}
-            speed={2}
-            distort={0.3}
-            radius={1}
-            emissive={color}
-            emissiveIntensity={hovered ? 0.8 : 0.3}
-            metalness={0.8}
-            roughness={0.2}
-          />
-          <Edges color={hovered ? "#ffffff" : color} />
-        </mesh>
-      </Trail>
-      {tech && hovered && (
-        <Text
-          position={[0, 1, 0]}
-          fontSize={0.3}
-          color="white"
-          anchorX="center"
-          anchorY="middle"
-          outlineWidth={0.02}
-          outlineColor="#000000"
-        >
-          {tech}
-        </Text>
-      )}
-    </group>
-  );
-}
-
-// DNA Helix animation
-function DNAHelix() {
-  const helixRef = useRef<THREE.Group>(null);
-  
-  useFrame((state) => {
-    if (helixRef.current) {
-      helixRef.current.rotation.y = state.clock.elapsedTime * 0.5;
-    }
-  });
-  
-  const spheres = [];
-  for (let i = 0; i < 20; i++) {
-    const angle = (i / 20) * Math.PI * 4;
-    const y = (i - 10) * 0.2;
-    const x1 = Math.cos(angle) * 0.5;
-    const z1 = Math.sin(angle) * 0.5;
-    const x2 = Math.cos(angle + Math.PI) * 0.5;
-    const z2 = Math.sin(angle + Math.PI) * 0.5;
-    
-    spheres.push(
-      <Sphere key={`sphere1-${i}`} position={[x1, y, z1]} args={[0.08, 16, 16]}>
-        <meshStandardMaterial color="#3b82f6" emissive="#3b82f6" emissiveIntensity={0.5} />
-      </Sphere>,
-      <Sphere key={`sphere2-${i}`} position={[x2, y, z2]} args={[0.08, 16, 16]}>
-        <meshStandardMaterial color="#8b5cf6" emissive="#8b5cf6" emissiveIntensity={0.5} />
-      </Sphere>
-    );
-  }
-  
-  return <group ref={helixRef}>{spheres}</group>;
-}
-
 // Glitch text effect
 function GlitchText({ children, className = "" }: { children: string; className?: string }) {
   const [glitched, setGlitched] = useState(false);
@@ -278,29 +129,85 @@ function GlitchText({ children, className = "" }: { children: string; className?
 function LoadingScreen({ progress }: { progress: number }) {
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black"
+      className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-900"
+      style={{ 
+        zIndex: 99999,
+        pointerEvents: progress === 100 ? 'none' : 'auto'
+      }}
       initial={{ opacity: 1 }}
       animate={{ opacity: progress === 100 ? 0 : 1 }}
-      transition={{ duration: 0.5 }}
-      style={{ pointerEvents: progress === 100 ? 'none' : 'all' }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.8, ease: "easeInOut" }}
     >
-      <div className="text-center">
-        <div className="mb-8">
+      {/* Animated background */}
+      <div className="absolute inset-0 overflow-hidden">
+        <motion.div
+          className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl"
+          animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
+          transition={{ duration: 3, repeat: Infinity }}
+        />
+        <motion.div
+          className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl"
+          animate={{ scale: [1.2, 1, 1.2], opacity: [0.5, 0.3, 0.5] }}
+          transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
+        />
+      </div>
+
+      <div className="text-center relative z-10">
+        {/* Logo/Initials */}
+        <motion.div
+          className="mb-8 relative"
+          initial={{ scale: 0.5, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
           <motion.div
-            className="text-6xl font-bold bg-gradient-to-r from-blue-400 to-purple-600 bg-clip-text text-transparent"
-            animate={{ scale: [1, 1.1, 1] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
+            className="text-7xl sm:text-8xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent"
+            animate={{ 
+              backgroundPosition: ['0% 50%', '100% 50%', '0% 50%']
+            }}
+            transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+            style={{ backgroundSize: '200% 200%' }}
           >
             RN
           </motion.div>
-        </div>
-        <div className="w-64 h-2 bg-gray-800 rounded-full overflow-hidden">
+          
+          {/* Rotating ring */}
           <motion.div
-            className="h-full bg-gradient-to-r from-blue-500 to-purple-600"
-            style={{ width: `${progress}%` }}
+            className="absolute inset-0 border-4 border-dashed border-purple-500/30 rounded-full"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
           />
+        </motion.div>
+
+        {/* Progress bar */}
+        <div className="w-64 sm:w-80 mx-auto">
+          <div className="relative">
+            <div className="h-2 bg-gray-800/50 backdrop-blur-sm rounded-full overflow-hidden border border-gray-700/50">
+              <motion.div
+                className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"
+                style={{ width: `${progress}%` }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+              >
+                <motion.div
+                  className="h-full w-full bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                  animate={{ x: ['-100%', '200%'] }}
+                  transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                />
+              </motion.div>
+            </div>
+          </div>
+          
+          {/* Progress text */}
+          <motion.p
+            className="mt-4 text-lg font-semibold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent"
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+          >
+            {progress}%
+          </motion.p>
+          <p className="text-xs text-gray-500 mt-1">Loading experience...</p>
         </div>
-        <p className="mt-4 text-gray-400">{progress}%</p>
       </div>
     </motion.div>
   );
@@ -571,10 +478,47 @@ export default function Portfolio3D() {
 
   return (
     <>
+      {/* JSON-LD Structured Data for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Person',
+            name: 'Rodney Naro',
+            url: 'https://rodneynaro.vercel.app',
+            image: '/images/profile.jpg',
+            jobTitle: 'Full-Stack Developer',
+            worksFor: {
+              '@type': 'Organization',
+              name: 'PNG Unitech'
+            },
+            description: 'Full-Stack Developer specializing in TypeScript, React, React Native, Next.js, and 3D Web Experiences',
+            sameAs: [
+              'https://github.com/rodnar123',
+              'https://www.linkedin.com/in/rodney-naro-74378062/',
+              'https://www.facebook.com/rodney.naro.965'
+            ],
+            knowsAbout: [
+              'TypeScript',
+              'React',
+              'React Native',
+              'Next.js',
+              'Three.js',
+              'Node.js',
+              'Full-Stack Development',
+              '3D Web Development'
+            ],
+            alumniOf: 'PNG University of Technology'
+          })
+        }}
+      />
+      
       {mounted && <LoadingScreen progress={loadingProgress} />}
       {/* {mounted && <CustomCursor />} */}
+      <ScrollProgress />
       
-      <div ref={containerRef} className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white overflow-x-hidden">
+      <div ref={containerRef} className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white overflow-x-hidden" style={{ isolation: 'isolate', position: 'relative', zIndex: 1 }}>
         {mounted && (
           <style jsx global>{`
             @keyframes glitch-1 {
@@ -600,7 +544,8 @@ export default function Portfolio3D() {
 
         {/* Enhanced Navigation */}
         <motion.nav 
-          className="fixed top-0 w-full z-50 bg-gray-900/20 backdrop-blur-xl border-b border-gray-800/50"
+          className="fixed top-0 w-full bg-gray-900/20 backdrop-blur-xl border-b border-gray-800/50"
+          style={{ zIndex: 50 }}
           initial={{ y: -100 }}
           animate={{ y: 0 }}
           transition={{ duration: 0.5, delay: 0.5 }}
@@ -629,17 +574,26 @@ export default function Portfolio3D() {
                 />
               </motion.a>
             </motion.div>
-            <div className="flex gap-4 flex-wrap items-center justify-end w-full md:w-auto">
+            
+            {/* Desktop Navigation - Hidden on mobile */}
+            <div className="hidden md:flex gap-3 lg:gap-4 xl:gap-6 items-center">
               {['Home', 'Projects', 'Skills', 'Contact'].map((item, index) => (
                 <motion.a
                   key={item}
                   href={`#${item.toLowerCase()}`}
-                  className="relative hover:text-blue-400 transition-colors font-medium"
+                  className="relative hover:text-blue-400 transition-colors font-medium text-sm lg:text-base whitespace-nowrap cursor-pointer"
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.7 + index * 0.1 }}
                   whileHover={{ y: -2 }}
-                  onClick={() => setActiveSection(item.toLowerCase())}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setActiveSection(item.toLowerCase());
+                    const element = document.getElementById(item.toLowerCase());
+                    if (element) {
+                      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                  }}
                 >
                   {item}
                   {activeSection === item.toLowerCase() && (
@@ -654,224 +608,269 @@ export default function Portfolio3D() {
           </div>
         </motion.nav>
 
-        {/* Hero Section with Enhanced 3D */}
+        {/* Mobile Navigation - Outside nav for proper z-index */}
+        <MobileMenu 
+          activeSection={activeSection}
+          setActiveSection={setActiveSection}
+        />
+
+        {/* Hero Section with Modern Glassmorphism */}
         <section
           id="home"
           ref={heroRef}
-          className="min-h-screen flex items-center justify-center relative px-2 sm:px-4"
+          className="min-h-screen lg:h-screen flex items-center justify-center relative px-3 sm:px-4 lg:px-6 pt-16 pb-8 overflow-x-hidden"
+          style={{ zIndex: 1 }}
         >
-          {/* Animated background layers */}
+          {/* Premium animated background */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="parallax-bg absolute inset-0" data-speed="0.5">
-              <div className="absolute top-10 left-2 w-40 h-40 sm:w-56 sm:h-56 md:w-72 md:h-72 bg-blue-500/20 rounded-full blur-3xl animate-pulse" />
-              <div className="absolute bottom-10 right-2 w-56 h-56 sm:w-72 sm:h-72 md:w-96 md:h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
+            <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/30 rounded-full blur-3xl animate-pulse" />
+            <div className="absolute bottom-0 right-1/4 w-[32rem] h-[32rem] bg-purple-500/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40rem] h-[40rem] bg-pink-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+          </div>
+
+          <div className="container mx-auto px-3 sm:px-4 relative z-[5] max-w-7xl w-full py-4 lg:py-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-center w-full">
+              {/* Left Column - Content in single card */}
+              <motion.div 
+                style={{ y, opacity }} 
+                className="order-2 lg:order-1 flex flex-col"
+              >
+                <GlassCard className="p-4 sm:p-5 lg:p-6">
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.2 }}
+                    className="space-y-3 sm:space-y-4"
+                  >
+                    {/* Name with AnimatedGradientText */}
+                    <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight">
+                      <AnimatedGradientText>Rodney Naro</AnimatedGradientText>
+                    </h1>
+
+                    {/* Tagline */}
+                    <p className="text-sm sm:text-base lg:text-lg text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-purple-300 to-pink-300 font-semibold">
+                      <span className="scramble-text">{mounted ? "" : "Freebie Techie! Coding as a search!"}</span>
+                    </p>
+
+                    {/* Description */}
+                    <motion.p
+                      className="text-gray-300 text-xs sm:text-sm lg:text-base leading-relaxed"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.6 }}
+                    >
+                      Full-Stack Developer specializing in <span className="text-blue-400 font-semibold">TypeScript</span>, <span className="text-cyan-400 font-semibold">React</span>, and <span className="text-purple-400 font-semibold">React Native</span>.
+                      Building innovative solutions from PNG Unitech.
+                    </motion.p>
+
+                    {/* CTA Buttons */}
+                    <motion.div
+                      className="flex flex-wrap gap-2"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.8 }}
+                    >
+                      <motion.a
+                        href="https://github.com/rodnar123"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Button
+                          className="h-9 sm:h-10 px-3 sm:px-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-xs sm:text-sm font-semibold shadow-lg shadow-blue-500/50 transition-all duration-300"
+                        >
+                          <Github className="mr-1.5 h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                          GitHub
+                        </Button>
+                      </motion.a>
+                      
+                      <motion.a
+                        href="https://www.linkedin.com/in/rodney-naro-74378062/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Button
+                          className="h-9 sm:h-10 px-3 sm:px-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-xs sm:text-sm font-semibold shadow-lg shadow-purple-500/50 transition-all duration-300"
+                        >
+                          <Linkedin className="mr-1.5 h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                          LinkedIn
+                        </Button>
+                      </motion.a>
+                      
+                      <motion.a
+                        href="https://www.facebook.com/rodney.naro.965"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Button
+                          className="h-9 sm:h-10 px-3 sm:px-4 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-xs sm:text-sm font-semibold shadow-lg shadow-pink-500/50 transition-all duration-300"
+                        >
+                          <Facebook className="mr-1.5 h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                          Facebook
+                        </Button>
+                      </motion.a>
+                    </motion.div>
+
+                    {/* Stats inline */}
+                    <motion.div
+                      className="grid grid-cols-3 gap-2 pt-2"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 1 }}
+                    >
+                      {[
+                        { label: "Projects", value: "6+", icon: Rocket, color: "from-blue-500 to-cyan-500" },
+                        { label: "Technologies", value: "15+", icon: Cpu, color: "from-purple-500 to-pink-500" },
+                        { label: "Experience", value: "5 Years", icon: Zap, color: "from-orange-500 to-red-500" }
+                      ].map((stat, idx) => (
+                        <div
+                          key={stat.label}
+                          className="p-2 sm:p-2.5 text-center bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 hover:border-white/20 transition-all group"
+                        >
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.5 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: 1 + idx * 0.1 }}
+                          >
+                            <stat.icon className={`h-4 w-4 sm:h-5 sm:w-5 mx-auto mb-1 bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`} style={{ WebkitTextFillColor: 'transparent', WebkitBackgroundClip: 'text' }} />
+                            <div className={`text-base sm:text-lg lg:text-xl font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}>
+                              {stat.value}
+                            </div>
+                            <div className="text-[9px] sm:text-[10px] text-gray-400 font-medium">{stat.label}</div>
+                          </motion.div>
+                        </div>
+                      ))}
+                    </motion.div>
+                  </motion.div>
+                </GlassCard>
+              </motion.div>
+
+              {/* Right Column - Profile Image & 3D Scene stacked */}
+              <motion.div
+                className="order-1 lg:order-2 flex flex-col items-center gap-3 lg:gap-4"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+              >
+                {/* Profile Image with 3D Scene combined in GlassCard */}
+                <GlassCard className="w-full p-3 sm:p-4 lg:p-5">
+                  <div className="flex flex-col items-center gap-3 sm:gap-4">
+                    {/* Profile Image */}
+                    <motion.div
+                      className="relative group"
+                      whileHover={{ scale: 1.05 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                    >
+                      {/* Glow effect */}
+                      <div className="absolute -inset-2 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full blur-xl opacity-60 group-hover:opacity-80 animate-pulse transition-opacity" />
+                      
+                      {/* Profile Image */}
+                      <motion.img
+                        src="/images/profile.jpg"
+                        alt="Rodney Naro"
+                        className="relative w-28 h-28 xs:w-32 xs:h-32 sm:w-36 sm:h-36 lg:w-40 lg:h-40 rounded-full object-cover border-4 border-white/30 shadow-2xl"
+                        whileHover={{
+                          scale: 1.1,
+                          rotate: 5,
+                          borderColor: "rgba(168, 85, 247, 0.6)"
+                        }}
+                        transition={{ duration: 0.4 }}
+                        onError={(e) => {
+                          e.currentTarget.src = 'https://via.placeholder.com/256/3b82f6/ffffff?text=RN';
+                        }}
+                      />
+                      
+                      {/* Decorative ring */}
+                      <motion.div
+                        className="absolute inset-0 rounded-full border-2 border-dashed border-purple-400/30"
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                      />
+                    </motion.div>
+
+                    {/* 3D Scene */}
+                    {mounted && (
+                      <div className="w-full">
+                        <div className="h-[140px] xs:h-[160px] sm:h-[180px] lg:h-[200px] relative rounded-lg overflow-hidden bg-black/20 touch-none select-none">
+                          <Canvas camera={{ position: [0, 0, 5], fov: 60 }}>
+                            <PerspectiveCamera makeDefault position={[0, 0, 5]} />
+                            <ambientLight intensity={0.5} />
+                            <pointLight position={[10, 10, 10]} intensity={1} />
+                            <spotLight position={[-10, -10, -10]} angle={0.15} penumbra={1} intensity={0.5} />
+
+                            <Suspense fallback={null}>
+                              <Environment preset="city" />
+                              <OrbitControls
+                                enableZoom={false}
+                                enablePan={false}
+                                enableDamping={true}
+                                dampingFactor={0.05}
+                                autoRotate
+                                autoRotateSpeed={0.8}
+                                maxPolarAngle={Math.PI / 2}
+                                minPolarAngle={Math.PI / 2}
+                                touches={{
+                                  ONE: 0,
+                                  TWO: 0
+                                }}
+                              />
+
+                              <Stars radius={50} depth={30} count={2000} factor={3} saturation={0} fade speed={1} />
+                              <ParticleField />
+
+                              <Float speed={1.2} rotationIntensity={0.5} floatIntensity={1}>
+                                <DNAHelix />
+                              </Float>
+
+                              <Float speed={1.5} rotationIntensity={1} floatIntensity={1.5}>
+                                <mesh>
+                                  <torusKnotGeometry args={[0.8, 0.25, 100, 16]} />
+                                  <MeshDistortMaterial
+                                    color="#3b82f6"
+                                    speed={2}
+                                    distort={0.3}
+                                    radius={1}
+                                    metalness={0.9}
+                                    roughness={0.1}
+                                    emissive="#1e40af"
+                                    emissiveIntensity={0.4}
+                                  />
+                                </mesh>
+                              </Float>
+
+                              <EffectComposer>
+                                <Bloom luminanceThreshold={0.2} luminanceSmoothing={0.9} height={300} />
+                                <Vignette eskil={false} offset={0.1} darkness={0.4} />
+                              </EffectComposer>
+                            </Suspense>
+                          </Canvas>
+                          
+                          <motion.div
+                            className="absolute bottom-1 left-0 right-0 text-center"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 2 }}
+                          >
+                            <p className="text-[9px] sm:text-[10px] text-gray-400 flex items-center justify-center gap-0.5">
+                              <SparklesIcon className="w-2.5 h-2.5" />
+                              Drag to explore
+                            </p>
+                          </motion.div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </GlassCard>
+              </motion.div>
             </div>
           </div>
 
-          <div className="container mx-auto px-2 sm:px-4 grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center relative z-10">
-            <motion.div style={{ y, opacity }} className="space-y-6 w-full">
-              <motion.div
-          initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-              >
-            <h1 className="hero-title text-2xl sm:text-3xl md:text-4xl lg:text-6xl xl:text-7xl font-bold flex items-center gap-2 sm:gap-3 flex-wrap">
-            <span className="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
-              Rodney Naro
-            </span>
-            <motion.img
-              src="/images/profile.jpg"
-              alt="Rodney Naro"
-              className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 xl:w-24 xl:h-24 rounded-full object-cover border-2 md:border-3 border-blue-400 shadow-lg shadow-blue-400/50"
-              whileHover={{
-                scale: 1.1,
-                rotate: 360,
-                borderColor: "#a855f7"
-              }}
-              transition={{ duration: 0.5 }}
-            />
-          </h1>
-              </motion.div>
 
-              <p className="hero-subtitle text-base sm:text-lg md:text-xl lg:text-2xl text-gray-300">
-          <span className="scramble-text">{mounted ? "" : "Freebie Techie! Coding as a search!"}</span>
-              </p>
-
-              <motion.p
-          className="text-gray-400 text-sm sm:text-base md:text-lg"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5 }}
-              >
-          Full-Stack Developer specializing in TypeScript, React, and React Native.
-          Building innovative solutions from PNG Unitech.
-              </motion.p>
-
-              <motion.div
-          className="flex flex-wrap gap-3 sm:gap-4"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.8 }}
-              >
-          <Button
-            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 group relative overflow-hidden"
-            size="lg"
-          >
-            <span className="relative z-10 flex items-center">
-              <Github className="mr-2 h-5 w-5" />
-              <a href="https://github.com/rodnar123" target="_blank" rel="noopener noreferrer">
-                GitHub
-              </a>
-            </span>
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600"
-              initial={{ x: '-100%' }}
-              whileHover={{ x: 0 }}
-              transition={{ duration: 0.3 }}
-            />
-          </Button>
-          <Button
-            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 group relative overflow-hidden"
-            size="lg"
-          >
-            <span className="relative z-10 flex items-center">
-              <Linkedin className="mr-2 h-5 w-5" />
-              <a href="https://www.linkedin.com/in/rodney-naro-74378062/" target="_blank" rel="noopener noreferrer">
-                LinkedIn
-              </a>
-            </span>
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600"
-              initial={{ x: '-100%' }}
-              whileHover={{ x: 0 }}
-              transition={{ duration: 0.3 }}
-            />
-          </Button>
-          <Button
-            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 group relative overflow-hidden"
-            size="lg"
-          >
-            <span className="relative z-10 flex items-center">
-              <Mail className="mr-2 h-5 w-5" />
-              <a href="https://www.facebook.com/rodney.naro.965" target="_blank" rel="noopener noreferrer">
-                Facebook
-              </a>
-            </span>
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600"
-              initial={{ x: '-100%' }}
-              whileHover={{ x: 0 }}
-              transition={{ duration: 0.3 }}
-            />
-          </Button>
-              </motion.div>
-
-              {/* Stats */}
-              <motion.div
-          className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 pt-6 w-full"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 2 }}
-              >
-          {[
-            { label: "Projects", value: "6+", icon: Rocket },
-            { label: "Technologies", value: "15+", icon: Cpu },
-            { label: "Experience", value: "5 Years", icon: Zap }
-          ].map((stat) => (
-            <motion.div
-              key={stat.label}
-              className="text-center p-3 sm:p-4 bg-gray-800/30 backdrop-blur-sm rounded-lg border border-gray-700/50 flex flex-col items-center min-w-0"
-              whileHover={{ scale: 1.05, borderColor: 'rgb(59 130 246 / 0.5)' }}
-            >
-              <stat.icon className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 mx-auto mb-2 text-blue-400" />
-              <div className="text-lg sm:text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-                {stat.value}
-              </div>
-              <div className="text-xs sm:text-sm md:text-base text-gray-400">{stat.label}</div>
-            </motion.div>
-          ))}
-              </motion.div>
-            </motion.div>
-
-            {mounted && (
-              <div className="canvas-container h-[220px] xs:h-[280px] sm:h-[320px] md:h-[400px] lg:h-[500px] xl:h-[600px] relative w-full">
-          <Canvas camera={{ position: [0, 0, 5], fov: 75 }}>
-            <PerspectiveCamera makeDefault position={[0, 0, 5]} />
-            <ambientLight intensity={0.5} />
-            <pointLight position={[10, 10, 10]} intensity={1} />
-            <spotLight position={[-10, -10, -10]} angle={0.15} penumbra={1} intensity={0.5} />
-
-            <Suspense fallback={null}>
-              <Environment preset="city" />
-              <OrbitControls
-                enableZoom={false}
-                autoRotate
-                autoRotateSpeed={0.5}
-                maxPolarAngle={Math.PI / 2}
-                minPolarAngle={Math.PI / 2}
-              />
-
-              {/* Background effects */}
-              <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
-              <Cloud opacity={0.1} speed={0.4} />
-
-              {/* Particle field */}
-              <ParticleField />
-
-              {/* Tech spheres with labels */}
-              <TechSphere position={[2.5, 1, 0]} color="#3178c6" tech="TypeScript" />
-              <TechSphere position={[-2.5, -1, 0]} color="#61dafb" tech="React" />
-              <TechSphere position={[0, 2.5, -1]} color="#06b6d4" tech="Tailwind" />
-              <TechSphere position={[1.5, -2, 1]} color="#339933" tech="Node.js" />
-              <TechSphere position={[-1.5, 0.5, 0.5]} color="#8b5cf6" tech="Three.js" scale={0.8} />
-              <TechSphere position={[2, -0.5, -1.5]} color="#f59e0b" tech="GSAP" scale={0.7} />
-
-              {/* Central DNA Helix */}
-              <Float speed={1} rotationIntensity={0.5} floatIntensity={1}>
-                <DNAHelix />
-              </Float>
-
-              {/* Main torusKnot with enhanced materials */}
-              <Float speed={1.5} rotationIntensity={1} floatIntensity={2}>
-                <mesh>
-            <torusKnotGeometry args={[1, 0.3, 128, 16]} />
-            <MeshDistortMaterial
-              color="#3b82f6"
-              speed={2}
-              distort={0.4}
-              radius={1}
-              metalness={0.9}
-              roughness={0.1}
-              emissive="#1e40af"
-              emissiveIntensity={0.5}
-            />
-                </mesh>
-              </Float>
-
-              {/* Post-processing effects */}
-              <EffectComposer>
-                <Bloom luminanceThreshold={0.2} luminanceSmoothing={0.9} height={300} />
-                <ChromaticAberration offset={[0.0005, 0.0005]} />
-                <Vignette eskil={false} offset={0.1} darkness={0.5} />
-              </EffectComposer>
-            </Suspense>
-          </Canvas>
-
-          {/* 3D scene overlay text */}
-          <motion.div
-            className="absolute bottom-2 left-2 right-2 sm:bottom-4 sm:left-4 sm:right-4 text-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 2.5 }}
-          >
-            <p className="text-xs sm:text-sm text-gray-400">
-              <SparklesIcon className="inline-block w-4 h-4 mr-1" />
-              Interactive 3D Experience • Click & Drag to Explore
-            </p>
-          </motion.div>
-              </div>
-            )}
-          </div>
 
           {/* Animated particles background */}
           <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
@@ -899,138 +898,215 @@ export default function Portfolio3D() {
           </div>
         </section>
 
-        {/* Projects Section with Enhanced Cards */}
-  <section id="projects" ref={projectsRef} className="py-20 projects-section relative">
-    <div className="container mx-auto px-4">
-            <motion.h2 
-              className="text-4xl lg:text-5xl xl:text-6xl font-bold text-center mb-16"
-              initial={{ opacity: 0, y: 50 }}
+        {/* Projects Section with Modern 3D Cards */}
+        <section id="projects" ref={projectsRef} className="py-20 sm:py-24 lg:py-32 relative overflow-hidden" style={{ zIndex: 1 }}>
+          {/* Background accent */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50rem] h-[50rem] bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+          
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-[5]">
+            <motion.div
+              className="text-center mb-16"
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <GlitchText className="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
-                Featured Projects
-              </GlitchText>
-            </motion.h2>
+              <h2 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-4">
+                <AnimatedGradientText>Featured Projects</AnimatedGradientText>
+              </h2>
+              <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto">
+                Explore my latest work showcasing cutting-edge technologies and innovative solutions
+              </p>
+            </motion.div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
               {projects.map((project, index) => (
                 <motion.div
                   key={project.title}
-                  className="project-card group"
                   initial={{ opacity: 0, y: 50 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
+                  transition={{ delay: index * 0.1, duration: 0.5 }}
                   viewport={{ once: true }}
-                  whileHover={{ y: -10 }}
+                  className="h-full"
                 >
-                  <Card className="bg-gray-800/30 backdrop-blur-xl border-gray-700/50 h-full hover:border-blue-500/50 transition-all duration-500 overflow-hidden relative">
-                    {/* Animated gradient background */}
-                    <motion.div
-                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                      style={{
-                        background: `radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), ${project.color}40, transparent 50%)`
-                      }}
-                    />
-                    {/* Top gradient bar */}
-                    <div className="h-1 relative overflow-hidden">
+                  <TiltCard className="h-full">
+                    <GlassCard className="h-full p-6 sm:p-8 group cursor-pointer relative overflow-hidden">
+                      {/* Top accent bar */}
                       <motion.div
-                        className="h-full"
+                        className="absolute top-0 left-0 right-0 h-1"
                         style={{ backgroundColor: project.color }}
-                        initial={{ x: '-100%' }}
-                        whileInView={{ x: 0 }}
-                        transition={{ duration: 1, delay: index * 0.1 }}
+                        initial={{ scaleX: 0 }}
+                        whileInView={{ scaleX: 1 }}
+                        transition={{ duration: 0.8, delay: index * 0.1 }}
                       />
-                    </div>
-                    <CardHeader className="relative">
-                      <CardTitle className="text-xl text-white flex items-center justify-between group">
-                        <span className="group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-purple-500 group-hover:bg-clip-text transition-all duration-300">
-                          {project.title}
-                        </span>
-                        <a href={project.github} target="_blank" rel="noopener noreferrer">
-                          <ExternalLink className="h-5 w-5 text-gray-400 hover:text-white transition-all duration-300 group-hover:rotate-45" />
-                        </a>
-                      </CardTitle>
-                      <CardDescription className="text-gray-400 mt-2">
-                        {project.description || "No description provided."}
-                      </CardDescription>
-                    </CardHeader>
-                  </Card>
+
+                      {/* Hover gradient effect */}
+                      <div
+                        className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-500 pointer-events-none"
+                        style={{
+                          background: `radial-gradient(circle at 50% 50%, ${project.color}, transparent 70%)`
+                        }}
+                      />
+
+                      <div className="relative z-[2] flex flex-col h-full">
+                        {/* Project icon/color indicator */}
+                        <motion.div
+                          className="w-14 h-14 rounded-xl mb-6 flex items-center justify-center"
+                          style={{
+                            background: `linear-gradient(135deg, ${project.color}40, ${project.color}20)`
+                          }}
+                          whileHover={{ scale: 1.1, rotate: 5 }}
+                        >
+                          <Code2 className="w-7 h-7" style={{ color: project.color }} />
+                        </motion.div>
+
+                        {/* Title & Link */}
+                        <div className="flex items-start justify-between mb-4">
+                          <h3 className="text-2xl font-bold text-white group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-purple-400 group-hover:bg-clip-text transition-all duration-300">
+                            {project.title}
+                          </h3>
+                          <motion.a
+                            href={project.github}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            whileHover={{ scale: 1.1, rotate: 12 }}
+                            whileTap={{ scale: 0.9 }}
+                            className="p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+                          >
+                            <ExternalLink className="w-5 h-5 text-gray-400 hover:text-white transition-colors" />
+                          </motion.a>
+                        </div>
+
+                        {/* Description */}
+                        <p className="text-gray-400 leading-relaxed flex-grow">
+                          {project.description || "A cutting-edge project showcasing modern web technologies and best practices."}
+                        </p>
+
+                        {/* View project button */}
+                        <motion.div
+                          className="mt-6 pt-6 border-t border-white/10"
+                          initial={{ opacity: 0 }}
+                          whileInView={{ opacity: 1 }}
+                          transition={{ delay: 0.3 }}
+                        >
+                          <a
+                            href={project.github}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 text-sm font-semibold hover:gap-3 transition-all duration-300 group/link"
+                            style={{ color: project.color }}
+                          >
+                            View Project
+                            <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
+                          </a>
+                        </motion.div>
+                      </div>
+                    </GlassCard>
+                  </TiltCard>
                 </motion.div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Skills Section with 3D visualization */}
-  <section id="skills" ref={skillsRef} className="py-20 tech-section relative overflow-hidden">
-          <div className="container mx-auto px-4">
-            <motion.h2 
-              className="text-4xl lg:text-5xl xl:text-6xl font-bold text-center mb-16"
-              initial={{ opacity: 0, y: 50 }}
+        {/* Skills Section with Modern Circular Progress */}
+        <section id="skills" ref={skillsRef} className="py-20 sm:py-24 lg:py-32 relative overflow-hidden" style={{ zIndex: 1 }}>
+          {/* Background accent */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60rem] h-[60rem] bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
+          
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-[5]">
+            <motion.div
+              className="text-center mb-16"
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <span className="bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent">
-                Tech Stack & Skills
-              </span>
-            </motion.h2>
+              <h2 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-4">
+                <AnimatedGradientText>Tech Stack & Skills</AnimatedGradientText>
+              </h2>
+              <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto">
+                Expertise across modern web and mobile technologies
+              </p>
+            </motion.div>
 
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <div className="space-y-6">
+            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+              {/* Skills Grid with Circular Progress */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
                 {techStack.map((tech, index) => (
                   <motion.div
                     key={tech.name}
-                    className="tech-item group"
-                    initial={{ opacity: 0, x: -50 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: index * 0.1, duration: 0.5 }}
                     viewport={{ once: true }}
-                    whileHover={{ x: 10 }}
+                    className="flex justify-center"
                   >
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-4">
-                        <motion.div
-                          className="p-3 rounded-lg bg-gray-800/50 border border-gray-700/50 group-hover:border-blue-500/50 transition-all duration-300"
-                          whileHover={{ rotate: 360 }}
-                          transition={{ duration: 0.5 }}
-                        >
-                          <tech.icon className="h-6 w-6" style={{ color: tech.color }} />
-                        </motion.div>
-                        <div>
-                          <span className="font-semibold text-lg">{tech.name}</span>
-                          <p className="text-sm text-gray-400">{tech.description}</p>
-                        </div>
-                      </div>
-                      <span className="text-sm font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-                        {tech.level}%
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-800/50 rounded-full h-3 overflow-hidden backdrop-blur-sm">
+                    <GlassCard className="p-3 sm:p-4 lg:p-6 text-center group hover:scale-105 transition-transform duration-300 w-full">
                       <motion.div
-                        className="progress-bar h-full rounded-full relative overflow-hidden"
-                        data-width={`${tech.level}%`}
-                        style={{ 
-                          width: '0%',
-                          background: `linear-gradient(90deg, ${tech.color}80, ${tech.color})`
-                        }}
+                        className="relative w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 mx-auto mb-2 sm:mb-3 lg:mb-4"
+                        whileHover={{ scale: 1.1 }}
+                        transition={{ type: "spring", stiffness: 300 }}
                       >
-                        <motion.div
-                          className="absolute inset-0 bg-white/20"
-                          animate={{ x: ['0%', '100%'] }}
-                          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                          style={{ width: '50%' }}
-                        />
+                        {/* Circular progress background */}
+                        <svg className="w-full h-full -rotate-90 transform" viewBox="0 0 112 112">
+                          <circle
+                            cx="56"
+                            cy="56"
+                            r="50"
+                            stroke="rgba(255,255,255,0.1)"
+                            strokeWidth="6"
+                            fill="none"
+                          />
+                          <motion.circle
+                            cx="56"
+                            cy="56"
+                            r="50"
+                            stroke={tech.color}
+                            strokeWidth="6"
+                            fill="none"
+                            strokeLinecap="round"
+                            initial={{ strokeDasharray: "0 314" }}
+                            whileInView={{
+                              strokeDasharray: `${(tech.level / 100) * 314} 314`
+                            }}
+                            transition={{ duration: 1.5, delay: index * 0.1, ease: "easeOut" }}
+                            viewport={{ once: true }}
+                            style={{
+                              filter: `drop-shadow(0 0 8px ${tech.color})`
+                            }}
+                          />
+                        </svg>
+                        
+                        {/* Icon & Percentage in center */}
+                        <div className="absolute inset-0 flex flex-col items-center justify-center">
+                          <tech.icon 
+                            className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 mb-0.5 sm:mb-1" 
+                            style={{ color: tech.color }}
+                          />
+                          <span 
+                            className="text-sm sm:text-base lg:text-lg font-bold"
+                            style={{ color: tech.color }}
+                          >
+                            {tech.level}%
+                          </span>
+                        </div>
                       </motion.div>
-                    </div>
+                      
+                      {/* Tech name */}
+                      <h3 className="text-xs sm:text-sm font-bold text-white mb-0.5 sm:mb-1 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-purple-400 group-hover:bg-clip-text transition-all">
+                        {tech.name}
+                      </h3>
+                      <p className="text-[10px] sm:text-xs text-gray-400 line-clamp-2">
+                        {tech.description}
+                      </p>
+                    </GlassCard>
                   </motion.div>
                 ))}
               </div>
 
               {mounted && (
-                <div className="h-[400px] lg:h-[500px] xl:h-[600px]">
+                <div className="h-[300px] sm:h-[350px] md:h-[400px] lg:h-[500px] xl:h-[600px] mt-8 lg:mt-0">
                   <Canvas camera={{ position: [0, 0, 8], fov: 60 }}>
                     <ambientLight intensity={0.5} />
                     <pointLight position={[10, 10, 10]} intensity={1} />
@@ -1119,178 +1195,201 @@ export default function Portfolio3D() {
           </div>
         </section>
 
-        {/* Contact Section with animations */}
-  <section id="contact" ref={contactRef} className="py-20 relative">
-          <div className="container mx-auto px-4">
-            <motion.h2 
-              className="text-4xl lg:text-5xl xl:text-6xl font-bold text-center mb-16"
-              initial={{ opacity: 0, y: 50 }}
+        {/* Contact Section with Premium Design */}
+        <section id="contact" ref={contactRef} className="py-20 sm:py-24 lg:py-32 relative overflow-hidden" style={{ zIndex: 1 }}>
+          {/* Background accent */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70rem] h-[70rem] bg-pink-500/10 rounded-full blur-3xl pointer-events-none" />
+          
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-[5]">
+            <motion.div
+              className="text-center mb-16"
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <span className="bg-gradient-to-r from-pink-400 via-red-500 to-orange-500 bg-clip-text text-transparent">
-                Get In Touch
-              </span>
-            </motion.h2>
+              <h2 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-4">
+                <AnimatedGradientText>Get In Touch</AnimatedGradientText>
+              </h2>
+              <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto">
+                Let's collaborate and build something extraordinary together
+              </p>
+            </motion.div>
 
-            <motion.div 
-              className="max-w-4xl mx-auto"
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6 }}
+            <motion.div
+              className="max-w-5xl mx-auto"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
               viewport={{ once: true }}
             >
-              <Card className="bg-gradient-to-br from-gray-800/30 to-gray-900/30 backdrop-blur-xl border-gray-700/50 overflow-hidden relative">
-                {/* Animated background gradient */}
-                <motion.div
-                  className="absolute inset-0 opacity-30"
-                  animate={{
-                    background: [
-                      'radial-gradient(circle at 0% 0%, #3b82f6 0%, transparent 50%)',
-                      'radial-gradient(circle at 100% 100%, #8b5cf6 0%, transparent 50%)',
-                      'radial-gradient(circle at 0% 100%, #ef4444 0%, transparent 50%)',
-                      'radial-gradient(circle at 100% 0%, #10b981 0%, transparent 50%)',
-                      'radial-gradient(circle at 0% 0%, #3b82f6 0%, transparent 50%)',
-                    ]
-                  }}
-                  transition={{ duration: 10, repeat: Infinity }}
-                />
+              <GlassCard className="p-8 sm:p-10 lg:p-12 relative overflow-hidden">
+                {/* Animated gradient orbs */}
+                <div className="absolute top-0 left-0 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl animate-pulse" />
+                <div className="absolute bottom-0 right-0 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
                 
-                <CardContent className="p-8 lg:p-12 relative">
-                  <div className="grid md:grid-cols-2 gap-12">
-                    <motion.div 
-                      className="space-y-6"
-                      initial={{ opacity: 0, x: -50 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.2 }}
-                    >
-                      <h3 className="text-3xl font-semibold mb-4 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-                        Let&apos;s Build Something Amazing
+                <div className="grid md:grid-cols-2 gap-8 lg:gap-12 relative z-[2]">
+                  {/* Left column - Info */}
+                  <motion.div
+                    className="space-y-6"
+                    initial={{ opacity: 0, x: -30 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.2 }}
+                    viewport={{ once: true }}
+                  >
+                    <div>
+                      <h3 className="text-3xl sm:text-4xl font-bold mb-4">
+                        <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                          Let's Build Something Amazing
+                        </span>
                       </h3>
-                      <p className="text-gray-300 text-lg leading-relaxed">
-                        I&apos;m always excited about new challenges and opportunities to create innovative solutions. 
-                        Whether you have a project in mind or just want to connect, I&apos;d love to hear from you!
+                      <p className="text-gray-300 text-base sm:text-lg leading-relaxed">
+                        I'm always excited about new challenges and opportunities to create innovative solutions. 
+                        Whether you have a project in mind or just want to connect, I'd love to hear from you!
                       </p>
-                      
-                      <div className="space-y-4">
-                        <motion.div 
-                          className="flex items-center gap-4 text-gray-300 p-4 bg-gray-800/30 rounded-lg border border-gray-700/50 hover:border-blue-500/50 transition-all duration-300"
-                          whileHover={{ x: 10, borderColor: 'rgb(59 130 246 / 0.5)' }}
-                        >
-                          <MapPin className="h-6 w-6 text-blue-400" />
+                    </div>
+
+                    <div className="space-y-4">
+                      <GlassCard className="p-4 group hover:scale-[1.02] transition-transform">
+                        <div className="flex items-center gap-4">
+                          <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20">
+                            <MapPin className="h-6 w-6 text-blue-400" />
+                          </div>
                           <div>
-                            <p className="font-semibold">Location</p>
+                            <p className="font-semibold text-white mb-1">Location</p>
                             <p className="text-sm text-gray-400">PNG Unitech, Papua New Guinea</p>
                           </div>
-                        </motion.div>
-                        
-                        <motion.div 
-                          className="flex items-center gap-4 text-gray-300 p-4 bg-gray-800/30 rounded-lg border border-gray-700/50 hover:border-purple-500/50 transition-all duration-300"
-                          whileHover={{ x: 10, borderColor: 'rgb(139 92 246 / 0.5)' }}
-                        >
-                          <Mail className="h-6 w-6 text-purple-400" />
-                          <div>
-                            <p className="font-semibold">Email</p>
-                            <p className="text-sm text-gray-400">rodney.naro@gmail.com</p>
+                        </div>
+                      </GlassCard>
+
+                      <GlassCard className="p-4 group hover:scale-[1.02] transition-transform">
+                        <div className="flex items-center gap-4">
+                          <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20">
+                            <Mail className="h-6 w-6 text-purple-400" />
                           </div>
-                        </motion.div>
-                        
-                        <motion.div 
-                          className="flex items-center gap-4 text-gray-300 p-4 bg-gray-800/30 rounded-lg border border-gray-700/50 hover:border-green-500/50 transition-all duration-300"
-                          whileHover={{ x: 10, borderColor: 'rgb(16 185 129 / 0.5)' }}
-                        >
-                          <Zap className="h-6 w-6 text-green-400" />
                           <div>
-                            <p className="font-semibold">Availability</p>
+                            <p className="font-semibold text-white mb-1">Email</p>
+                            <a 
+                              href="mailto:rodney.naro@gmail.com"
+                              className="text-sm text-gray-400 hover:text-purple-400 transition-colors"
+                            >
+                              rodney.naro@gmail.com
+                            </a>
+                          </div>
+                        </div>
+                      </GlassCard>
+
+                      <GlassCard className="p-4 group hover:scale-[1.02] transition-transform">
+                        <div className="flex items-center gap-4">
+                          <div className="p-3 rounded-xl bg-gradient-to-br from-green-500/20 to-emerald-500/20">
+                            <Zap className="h-6 w-6 text-green-400" />
+                          </div>
+                          <div>
+                            <p className="font-semibold text-white mb-1">Availability</p>
                             <p className="text-sm text-gray-400">Open for opportunities</p>
                           </div>
-                        </motion.div>
-                      </div>
-                    </motion.div>
+                        </div>
+                      </GlassCard>
+                    </div>
+                  </motion.div>
 
-                    <motion.div 
-                      className="space-y-4"
-                      initial={{ opacity: 0, x: 50 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.4 }}
-                    >
-                      <h3 className="text-2xl font-semibold mb-6">Connect on Social</h3>
-                      <div className="grid grid-cols-1 gap-3">
-                        <Button 
-                          className="w-full bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700/50 hover:border-blue-500/50 transition-all duration-300 group" 
+                  {/* Right column - Social connections */}
+                  <motion.div
+                    className="space-y-6"
+                    initial={{ opacity: 0, x: 30 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.4 }}
+                    viewport={{ once: true }}
+                  >
+                    <h3 className="text-2xl font-bold text-white mb-6">Connect on Social</h3>
+                    
+                    <div className="space-y-3">
+                      <motion.a
+                        href="https://github.com/rodnar123"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <Button
+                          className="w-full h-14 bg-gradient-to-r from-gray-800/80 to-gray-900/80 hover:from-gray-700/80 hover:to-gray-800/80 border border-white/10 hover:border-blue-400/50 transition-all duration-300 group justify-start text-left"
                           size="lg"
-                          onClick={() => window.open('https://github.com/rodnar123', '_blank')}
                         >
                           <Github className="mr-3 h-5 w-5 group-hover:rotate-12 transition-transform" />
-                          View GitHub Projects
-                          <ExternalLink className="ml-auto h-4 w-4 opacity-50 group-hover:opacity-100" />
+                          <span className="flex-grow">View GitHub Projects</span>
+                          <ExternalLink className="h-4 w-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                         </Button>
-                        
-                        <Button 
-                          className="w-full bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700/50 hover:border-blue-400/50 transition-all duration-300 group" 
+                      </motion.a>
+
+                      <motion.a
+                        href="https://www.linkedin.com/in/rodney-naro-74378062/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <Button
+                          className="w-full h-14 bg-gradient-to-r from-gray-800/80 to-gray-900/80 hover:from-gray-700/80 hover:to-gray-800/80 border border-white/10 hover:border-blue-400/50 transition-all duration-300 group justify-start text-left"
                           size="lg"
-                          onClick={() => window.open('https://www.linkedin.com/in/rodney-naro-74378062/', '_blank')}
                         >
                           <Linkedin className="mr-3 h-5 w-5 group-hover:rotate-12 transition-transform" />
-                          Connect on LinkedIn
-                          <ExternalLink className="ml-auto h-4 w-4 opacity-50 group-hover:opacity-100" />
+                          <span className="flex-grow">Connect on LinkedIn</span>
+                          <ExternalLink className="h-4 w-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                         </Button>
-                        
-                        <Button 
-                          className="w-full bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700/50 hover:border-indigo-500/50 transition-all duration-300 group" 
+                      </motion.a>
+
+                      <motion.a
+                        href="https://www.facebook.com/rodney.naro.965"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <Button
+                          className="w-full h-14 bg-gradient-to-r from-gray-800/80 to-gray-900/80 hover:from-gray-700/80 hover:to-gray-800/80 border border-white/10 hover:border-indigo-400/50 transition-all duration-300 group justify-start text-left"
                           size="lg"
-                          onClick={() => window.open('https://www.facebook.com/rodney.naro.965', '_blank')}
                         >
                           <Facebook className="mr-3 h-5 w-5 group-hover:rotate-12 transition-transform" />
-                          Follow on Facebook
-                          <ExternalLink className="ml-auto h-4 w-4 opacity-50 group-hover:opacity-100" />
+                          <span className="flex-grow">Follow on Facebook</span>
+                          <ExternalLink className="h-4 w-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                         </Button>
-                        
-                        <div className="relative mt-6">
-                          <div className="absolute inset-0 flex items-center">
-                            <span className="w-full border-t border-gray-700/50" />
-                          </div>
-                          <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-gray-900 px-2 text-gray-400">Or</span>
-                          </div>
+                      </motion.a>
+
+                      <div className="relative my-8">
+                        <div className="absolute inset-0 flex items-center">
+                          <div className="w-full border-t border-white/10" />
                         </div>
-                        
-                        <Button 
-                          className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 group relative overflow-hidden" 
-                          size="lg"
-                          onClick={() => window.location.href = 'mailto:rodney.naro@gmail.com'}
-                        >
-                          <span className="relative z-10 flex items-center justify-center w-full">
-                            <Mail className="mr-3 h-5 w-5" />
-                            Send Direct Email
-                            <Rocket className="ml-3 h-5 w-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                          </span>
-                          <motion.div
-                            className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-red-600"
-                            initial={{ x: '-100%' }}
-                            whileHover={{ x: 0 }}
-                            transition={{ duration: 0.5 }}
-                          />
-                        </Button>
+                        <div className="relative flex justify-center text-xs uppercase">
+                          <span className="px-3 text-gray-400 bg-gray-900/50 backdrop-blur-sm">Or send direct email</span>
+                        </div>
                       </div>
-                      
-                      {/* Social proof */}
-                      <motion.div 
-                        className="mt-8 p-4 bg-gray-800/30 rounded-lg border border-gray-700/50 text-center"
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.6 }}
+
+                      <motion.a
+                        href="mailto:rodney.naro@gmail.com"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                       >
-                        <div className="flex items-center justify-center gap-2 text-sm text-gray-400">
-                          <Shield className="h-4 w-4 text-green-400" />
-                          <span>Usually responds within 24 hours</span>
-                        </div>
-                      </motion.div>
-                    </motion.div>
-                  </div>
-                </CardContent>
-              </Card>
+                        <Button
+                          className="w-full h-14 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 shadow-lg shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/50 transition-all duration-300 group"
+                          size="lg"
+                        >
+                          <Mail className="mr-3 h-5 w-5" />
+                          <span className="flex-grow">Send Direct Email</span>
+                          <Rocket className="h-5 w-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                        </Button>
+                      </motion.a>
+                    </div>
+
+                    {/* Response time badge */}
+                    <GlassCard className="p-4 text-center">
+                      <div className="flex items-center justify-center gap-2 text-sm text-gray-400">
+                        <Shield className="h-4 w-4 text-green-400" />
+                        <span>Usually responds within 24 hours</span>
+                      </div>
+                    </GlassCard>
+                  </motion.div>
+                </div>
+              </GlassCard>
             </motion.div>
           </div>
         </section>

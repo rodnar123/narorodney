@@ -120,3 +120,55 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Accessibility Improvements */
+@layer utilities {
+  /* Focus visible styles for keyboard navigation */
+  .focus-visible-ring {
+    @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500;
+  }
+
+  /* Skip to main content link */
+  .skip-to-main {
+    @apply absolute -top-10 left-0 bg-blue-600 text-white px-4 py-2 z-[9999] focus:top-0 transition-all;
+  }
+
+  /* Screen reader only content */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  /* Reduced motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    * {
+      border-color: currentColor;
+    }
+  }
+
+  /* Focus visible for interactive elements */
+  button:focus-visible,
+  a:focus-visible,
+  [role="button"]:focus-visible {
+    @apply outline outline-2 outline-offset-2 outline-blue-500;
+  }
+}
