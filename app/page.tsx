@@ -20,6 +20,7 @@ import AnimatedGradientText from '@/components/AnimatedGradientText';
 import ScrollProgress from '@/components/ScrollProgress';
 import ParticleField from '@/components/ParticleField';
 import DNAHelix from '@/components/DNAHelix';
+import CVDownload from '@/components/CVDownload';
 
 // Only register plugins on client
 if (typeof window !== 'undefined') {
@@ -297,13 +298,16 @@ export default function Portfolio3D() {
   ];
 
   const techStack = [
-    { name: "TypeScript", icon: Code2, level: 90, color: "#3178c6", description: "Type-safe JavaScript" },
-    { name: "React/Next.js", icon: Layers, level: 95, color: "#61dafb", description: "Modern web frameworks" },
-    { name: "React Native", icon: Smartphone, level: 85, color: "#61dafb", description: "Cross-platform mobile" },
-    { name: "Node.js", icon: Terminal, level: 80, color: "#339933", description: "Backend runtime" },
-    { name: "Tailwind CSS", icon: SparklesIcon, level: 90, color: "#06b6d4", description: "Utility-first CSS" },
-    { name: "Three.js/WebGL", icon: Globe, level: 75, color: "#000000", description: "3D graphics" },
-    { name: "PostgreSQL", icon: Database, level: 80, color: "#4169e1", description: "Relational database" }
+    { name: "Next.js", icon: Layers, level: 95, color: "#000000", description: "Full-stack framework", url: "https://nextjs.org" },
+    { name: "TypeScript", icon: Code2, level: 90, color: "#3178c6", description: "Type-safe development", url: "https://www.typescriptlang.org" },
+    { name: "React Native", icon: Smartphone, level: 85, color: "#61dafb", description: "Mobile (Expo Go)", url: "https://reactnative.dev" },
+    { name: "Tailwind CSS", icon: SparklesIcon, level: 95, color: "#06b6d4", description: "Modern styling", url: "https://tailwindcss.com" },
+    { name: "Three.js", icon: Globe, level: 80, color: "#049ef4", description: "3D graphics & WebGL", url: "https://threejs.org" },
+    { name: "Framer Motion", icon: Zap, level: 90, color: "#ff0055", description: "UI animations", url: "https://www.framer.com/motion" },
+    { name: "Prisma ORM", icon: Database, level: 85, color: "#2d3748", description: "Database toolkit", url: "https://www.prisma.io" },
+    { name: "PostgreSQL", icon: Database, level: 80, color: "#4169e1", description: "SQL database", url: "https://www.postgresql.org" },
+    { name: "Supabase", icon: Shield, level: 85, color: "#3ecf8e", description: "Backend as a service", url: "https://supabase.com" },
+    { name: "Vercel", icon: Rocket, level: 90, color: "#000000", description: "Deployment platform", url: "https://vercel.com" }
   ];
 
   useEffect(() => {
@@ -630,8 +634,8 @@ export default function Portfolio3D() {
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.6 }}
                     >
-                      Full-Stack Developer specializing in <span className="text-blue-400 font-semibold">TypeScript</span>, <span className="text-cyan-400 font-semibold">React</span>, and <span className="text-purple-400 font-semibold">React Native</span>.
-                      Building innovative solutions from PNG Unitech.
+                      Full-Stack Developer specializing in <span className="text-blue-400 font-semibold">Next.js</span>, <span className="text-cyan-400 font-semibold">TypeScript</span>, and <span className="text-purple-400 font-semibold">React Native</span>.
+                      Building modern web experiences with <span className="text-emerald-400 font-semibold">Three.js</span>, <span className="text-pink-400 font-semibold">Framer Motion</span>, <span className="text-indigo-400 font-semibold">Supabase</span>, and <span className="text-gray-300 font-semibold">Vercel</span>.
                     </motion.p>
 
                     {/* CTA Buttons */}
@@ -685,6 +689,13 @@ export default function Portfolio3D() {
                           Facebook
                         </Button>
                       </motion.a>
+                      
+                      <motion.div
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <CVDownload />
+                      </motion.div>
                     </motion.div>
 
                     {/* Stats inline */}
@@ -985,7 +996,7 @@ export default function Portfolio3D() {
           {/* Background accent */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60rem] h-[60rem] bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
           
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-[5]">
+          <div className="container mx-auto px-2 sm:px-4 md:px-6 lg:px-8 relative z-[5] max-w-7xl">
             <motion.div
               className="text-center mb-16"
               initial={{ opacity: 0, y: 30 }}
@@ -1003,7 +1014,7 @@ export default function Portfolio3D() {
 
             <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
               {/* Skills Grid with Circular Progress */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
+              <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-3 lg:gap-4">
                 {techStack.map((tech, index) => (
                   <motion.div
                     key={tech.name}
@@ -1013,9 +1024,15 @@ export default function Portfolio3D() {
                     viewport={{ once: true }}
                     className="flex justify-center"
                   >
-                    <GlassCard className="p-3 sm:p-4 lg:p-6 text-center group hover:scale-105 transition-transform duration-300 w-full">
+                    <a
+                      href={tech.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full"
+                    >
+                      <GlassCard className="p-1.5 sm:p-3 text-center group hover:scale-105 transition-transform duration-300 w-full cursor-pointer">
                       <motion.div
-                        className="relative w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 mx-auto mb-2 sm:mb-3 lg:mb-4"
+                        className="relative w-14 h-14 sm:w-20 sm:h-20 mx-auto mb-1 sm:mb-2"
                         whileHover={{ scale: 1.1 }}
                         transition={{ type: "spring", stiffness: 300 }}
                       >
@@ -1052,11 +1069,11 @@ export default function Portfolio3D() {
                         {/* Icon & Percentage in center */}
                         <div className="absolute inset-0 flex flex-col items-center justify-center">
                           <tech.icon 
-                            className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 mb-0.5 sm:mb-1" 
+                            className="w-3.5 h-3.5 sm:w-5 sm:h-5 mb-0.5 sm:mb-1" 
                             style={{ color: tech.color }}
                           />
                           <span 
-                            className="text-sm sm:text-base lg:text-lg font-bold"
+                            className="text-[9px] sm:text-sm font-bold"
                             style={{ color: tech.color }}
                           >
                             {tech.level}%
@@ -1065,13 +1082,15 @@ export default function Portfolio3D() {
                       </motion.div>
                       
                       {/* Tech name */}
-                      <h3 className="text-xs sm:text-sm font-bold text-white mb-0.5 sm:mb-1 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-purple-400 group-hover:bg-clip-text transition-all">
+                      <h3 className="text-[9px] sm:text-xs font-bold text-white mb-0.5 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-purple-400 group-hover:bg-clip-text transition-all line-clamp-1">
                         {tech.name}
                       </h3>
-                      <p className="text-[10px] sm:text-xs text-gray-400 line-clamp-2">
+                      <ExternalLink className="w-2.5 h-2.5 mx-auto mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: tech.color }} />
+                      <p className="text-[8px] sm:text-[10px] text-gray-400 line-clamp-1 hidden sm:block">
                         {tech.description}
                       </p>
                     </GlassCard>
+                    </a>
                   </motion.div>
                 ))}
               </div>
