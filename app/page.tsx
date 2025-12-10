@@ -337,75 +337,241 @@ export default function Portfolio3D() {
     // GSAP animations - only run on client
     if (typeof window !== 'undefined' && containerRef.current) {
       const ctx = gsap.context(() => {
-        // Text scramble effect
-        gsap.to(".scramble-text", {
-          duration: 2,
-          text: "Freebie Techie! Coding as a search!",
-          ease: "none",
-          delay: 1
-        });
+        // ====== HERO SECTION ANIMATIONS ======
+        
+        // Hero entrance timeline for cinematic effect
+        const heroTl = gsap.timeline({ delay: 0.3 });
+        
+        // Text scramble effect with enhanced timing
+        heroTl.to(".scramble-text", {
+          duration: 2.5,
+          text: {
+            value: "Freebie Techie! Coding as a search!",
+            delimiter: ""
+          },
+          ease: "none"
+        }, 0.8);
 
-        // Hero section animations
-        gsap.from(".hero-title", {
-          y: 100,
+        // Hero section animations with 3D perspective
+        heroTl.from(".hero-title", {
+          y: 120,
           opacity: 0,
-          duration: 1.2,
-          ease: "power4.out",
-          stagger: 0.1,
-          delay: 0.5
-        });
+          rotationX: -45,
+          transformPerspective: 1000,
+          transformOrigin: "center bottom",
+          duration: 1.4,
+          ease: "back.out(1.4)",
+          stagger: 0.12
+        }, 0.2);
 
-        gsap.from(".hero-subtitle", {
+        // Tagline with typewriter-like reveal
+        heroTl.from(".hero-tagline", {
+          y: 40,
+          opacity: 0,
+          clipPath: "inset(0 100% 0 0)",
+          duration: 1,
+          ease: "power3.out"
+        }, 0.7);
+
+        // Description with staggered word reveal
+        heroTl.from(".hero-description", {
+          y: 30,
+          opacity: 0,
+          filter: "blur(10px)",
+          duration: 0.8,
+          ease: "power2.out"
+        }, 1);
+
+        // Hero buttons with pop effect
+        heroTl.from(".hero-buttons", {
+          y: 30,
+          opacity: 0,
+          scale: 0.9,
+          duration: 0.6,
+          ease: "back.out(2)"
+        }, 1.2);
+
+        // Stats with counting animation and scale pop
+        heroTl.from(".hero-stat", {
           y: 50,
           opacity: 0,
-          duration: 1,
-          delay: 1,
-          ease: "power3.out"
+          scale: 0.5,
+          rotationY: -30,
+          transformPerspective: 800,
+          duration: 0.8,
+          stagger: 0.15,
+          ease: "back.out(1.7)"
+        }, 1.4);
+
+        // Hero subtitle animation
+        gsap.from(".hero-subtitle", {
+          y: 60,
+          opacity: 0,
+          scale: 0.9,
+          duration: 1.2,
+          delay: 1.2,
+          ease: "elastic.out(1, 0.5)"
         });
 
-        // Floating animation for 3D canvas
+        // Floating animation for 3D canvas with rotation
         gsap.to(".canvas-container", {
           y: -30,
+          rotationY: 5,
           duration: 3,
           repeat: -1,
           yoyo: true,
-          ease: "power1.inOut"
+          ease: "sine.inOut"
         });
 
-        // Project cards animation with stagger
+        // Parallax floating orbs in hero with subtle movement
+        gsap.utils.toArray(".hero-section .parallax-bg").forEach((orb: any, i) => {
+          gsap.to(orb, {
+            x: `random(-20, 20)`,
+            y: `random(-20, 20)`,
+            scale: `random(0.95, 1.05)`,
+            duration: 4 + i,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut"
+          });
+        });
+
+        // ====== PROJECT CARDS ANIMATIONS ======
+        
+        // Project cards with 3D flip entrance and hover glow
         ScrollTrigger.batch(".project-card", {
           onEnter: (elements) => {
-            gsap.from(elements, {
-              y: 100,
-              opacity: 0,
-              duration: 1,
-              stagger: 0.15,
-              ease: "power3.out",
-              overwrite: true
-            });
+            gsap.fromTo(elements, 
+              {
+                y: 150,
+                opacity: 0,
+                rotationY: -30,
+                rotationX: 15,
+                scale: 0.7,
+                transformPerspective: 1200,
+                transformOrigin: "center center",
+                filter: "blur(10px)"
+              },
+              {
+                y: 0,
+                opacity: 1,
+                rotationY: 0,
+                rotationX: 0,
+                scale: 1,
+                filter: "blur(0px)",
+                duration: 1.4,
+                stagger: {
+                  each: 0.2,
+                  from: "start"
+                },
+                ease: "back.out(1.4)",
+                overwrite: true
+              }
+            );
           },
           once: true,
           start: "top 85%"
         });
 
-        // Tech stack animation with wave effect
-        gsap.from(".tech-item", {
-          scrollTrigger: {
-            trigger: ".tech-section",
-            start: "top 80%",
-            toggleActions: "play none none reverse"
-          },
-          x: -100,
-          opacity: 0,
-          duration: 0.8,
-          stagger: {
-            each: 0.1,
-            from: "start"
-          },
-          ease: "power3.out"
+        // Project card hover effects
+        gsap.utils.toArray(".project-card").forEach((card: any) => {
+          card.addEventListener('mouseenter', () => {
+            gsap.to(card, {
+              scale: 1.03,
+              rotationY: 2,
+              rotationX: -2,
+              duration: 0.4,
+              ease: "power2.out",
+              boxShadow: "0 25px 50px -12px rgba(59, 130, 246, 0.25)"
+            });
+          });
+          card.addEventListener('mouseleave', () => {
+            gsap.to(card, {
+              scale: 1,
+              rotationY: 0,
+              rotationX: 0,
+              duration: 0.5,
+              ease: "elastic.out(1, 0.5)",
+              boxShadow: "none"
+            });
+          });
         });
 
-        // Progress bars animation
+        // ====== TECH STACK ANIMATIONS ======
+        
+        // Tech section header reveal with dramatic scale
+        gsap.from(".tech-section-title", {
+          scrollTrigger: {
+            trigger: ".tech-section",
+            start: "top 85%"
+          },
+          y: 100,
+          opacity: 0,
+          scale: 0.7,
+          rotationX: -45,
+          transformPerspective: 1000,
+          filter: "blur(15px)",
+          duration: 1.2,
+          ease: "back.out(1.7)"
+        });
+
+        // Tech stack animation with wave effect and 3D - more dramatic
+        ScrollTrigger.batch(".tech-item", {
+          onEnter: (elements) => {
+            gsap.fromTo(elements, 
+              {
+                y: 80,
+                opacity: 0,
+                rotationY: -45,
+                rotationX: 20,
+                scale: 0.6,
+                transformPerspective: 1000,
+                filter: "blur(8px)"
+              },
+              {
+                y: 0,
+                opacity: 1,
+                rotationY: 0,
+                rotationX: 0,
+                scale: 1,
+                filter: "blur(0px)",
+                duration: 1,
+                stagger: {
+                  each: 0.08,
+                  from: "random",
+                  grid: "auto"
+                },
+                ease: "back.out(1.5)"
+              }
+            );
+          },
+          once: true,
+          start: "top 85%"
+        });
+
+        // Tech item hover effects
+        gsap.utils.toArray(".tech-item").forEach((item: any) => {
+          item.addEventListener('mouseenter', () => {
+            gsap.to(item, {
+              scale: 1.15,
+              rotationY: 10,
+              y: -10,
+              duration: 0.3,
+              ease: "back.out(2)"
+            });
+          });
+          item.addEventListener('mouseleave', () => {
+            gsap.to(item, {
+              scale: 1,
+              rotationY: 0,
+              y: 0,
+              duration: 0.5,
+              ease: "elastic.out(1, 0.3)"
+            });
+          });
+        });
+
+        // Progress bars animation with elastic effect
         gsap.to(".progress-bar", {
           scrollTrigger: {
             trigger: ".tech-section",
@@ -413,19 +579,234 @@ export default function Portfolio3D() {
             toggleActions: "play none none reverse"
           },
           width: (i, el) => el.getAttribute("data-width"),
-          duration: 2,
-          ease: "power2.out",
-          stagger: 0.1
+          duration: 2.5,
+          ease: "elastic.out(1, 0.5)",
+          stagger: 0.12
         });
 
+        // ====== PARALLAX & BACKGROUND EFFECTS ======
+        
         // Parallax effect on scroll
         gsap.to(".parallax-bg", {
           scrollTrigger: {
-            scrub: true
+            scrub: 1
           },
           y: (i, target) => -ScrollTrigger.maxScroll(window) * target.dataset.speed,
           ease: "none"
         });
+
+        // ====== SECTION REVEAL ANIMATIONS ======
+        
+        // Section headers with split text effect simulation
+        gsap.utils.toArray(".section-header").forEach((header: any) => {
+          gsap.from(header, {
+            scrollTrigger: {
+              trigger: header,
+              start: "top 85%",
+              toggleActions: "play none none reverse"
+            },
+            y: 100,
+            opacity: 0,
+            scale: 0.8,
+            rotationX: -30,
+            transformPerspective: 1000,
+            duration: 1.2,
+            ease: "back.out(1.7)"
+          });
+        });
+
+        // Contact section special entrance with dramatic 3D
+        ScrollTrigger.batch(".contact-card", {
+          onEnter: (elements) => {
+            gsap.fromTo(elements, 
+              {
+                y: 100,
+                opacity: 0,
+                scale: 0.8,
+                rotationX: -25,
+                rotationY: 15,
+                transformPerspective: 1200,
+                filter: "blur(8px)"
+              },
+              {
+                y: 0,
+                opacity: 1,
+                scale: 1,
+                rotationX: 0,
+                rotationY: 0,
+                filter: "blur(0px)",
+                duration: 1.2,
+                stagger: {
+                  each: 0.15,
+                  from: "start"
+                },
+                ease: "back.out(1.6)"
+              }
+            );
+          },
+          once: true,
+          start: "top 80%"
+        });
+
+        // Contact card hover glow effect
+        gsap.utils.toArray(".contact-card").forEach((card: any) => {
+          card.addEventListener('mouseenter', () => {
+            gsap.to(card, {
+              scale: 1.05,
+              rotationY: 5,
+              duration: 0.4,
+              ease: "power2.out"
+            });
+          });
+          card.addEventListener('mouseleave', () => {
+            gsap.to(card, {
+              scale: 1,
+              rotationY: 0,
+              duration: 0.5,
+              ease: "elastic.out(1, 0.3)"
+            });
+          });
+        });
+
+        // Social buttons magnetic hover effect
+        gsap.utils.toArray(".social-btn").forEach((btn: any) => {
+          btn.addEventListener('mouseenter', () => {
+            gsap.to(btn, {
+              scale: 1.1,
+              duration: 0.3,
+              ease: "back.out(1.7)"
+            });
+          });
+          btn.addEventListener('mouseleave', () => {
+            gsap.to(btn, {
+              scale: 1,
+              x: 0,
+              y: 0,
+              duration: 0.5,
+              ease: "elastic.out(1, 0.3)"
+            });
+          });
+          btn.addEventListener('mousemove', (e: MouseEvent) => {
+            const rect = btn.getBoundingClientRect();
+            const x = (e.clientX - rect.left - rect.width / 2) * 0.3;
+            const y = (e.clientY - rect.top - rect.height / 2) * 0.3;
+            gsap.to(btn, {
+              x,
+              y,
+              duration: 0.3,
+              ease: "power2.out"
+            });
+          });
+        });
+
+        // Stats counter animation
+        gsap.utils.toArray(".stat-number").forEach((stat: any) => {
+          const value = parseInt(stat.getAttribute("data-value") || "0");
+          gsap.from(stat, {
+            scrollTrigger: {
+              trigger: stat,
+              start: "top 85%"
+            },
+            textContent: 0,
+            duration: 2,
+            ease: "power2.out",
+            snap: { textContent: 1 },
+            onUpdate: function() {
+              stat.textContent = Math.ceil(this.targets()[0].textContent);
+            }
+          });
+        });
+
+        // ====== FOOTER ANIMATIONS ======
+        
+        // Footer entrance with slide up
+        gsap.from(".footer-section", {
+          scrollTrigger: {
+            trigger: ".footer-section",
+            start: "top 95%"
+          },
+          y: 50,
+          opacity: 0,
+          duration: 1,
+          ease: "power3.out"
+        });
+
+        // Footer content reveal
+        gsap.from(".footer-content", {
+          scrollTrigger: {
+            trigger: ".footer-section",
+            start: "top 90%"
+          },
+          y: 30,
+          opacity: 0,
+          scale: 0.95,
+          duration: 0.8,
+          delay: 0.2,
+          ease: "back.out(1.5)"
+        });
+
+        // Footer icons with stagger
+        gsap.from(".footer-icon", {
+          scrollTrigger: {
+            trigger: ".footer-section",
+            start: "top 90%"
+          },
+          y: 20,
+          opacity: 0,
+          scale: 0.8,
+          duration: 0.6,
+          stagger: 0.1,
+          delay: 0.4,
+          ease: "back.out(2)"
+        });
+
+        // ====== NAVIGATION ANIMATIONS ======
+        
+        // Navigation links hover effect
+        gsap.utils.toArray("nav a").forEach((link: any) => {
+          link.addEventListener('mouseenter', () => {
+            gsap.to(link, {
+              scale: 1.1,
+              color: "#60a5fa",
+              duration: 0.3,
+              ease: "power2.out"
+            });
+          });
+          link.addEventListener('mouseleave', () => {
+            gsap.to(link, {
+              scale: 1,
+              color: "",
+              duration: 0.3,
+              ease: "power2.out"
+            });
+          });
+        });
+
+        // ====== SCROLL REVEAL FOR ALL GLASS CARDS ======
+        
+        // Subtle reveal for any remaining glass cards
+        ScrollTrigger.batch(".glass-card:not(.contact-card):not(.project-card)", {
+          onEnter: (elements) => {
+            gsap.fromTo(elements,
+              {
+                y: 40,
+                opacity: 0.5,
+                scale: 0.98
+              },
+              {
+                y: 0,
+                opacity: 1,
+                scale: 1,
+                duration: 0.8,
+                stagger: 0.1,
+                ease: "power2.out"
+              }
+            );
+          },
+          once: true,
+          start: "top 90%"
+        });
+
       }, containerRef);
 
       return () => {
@@ -593,14 +974,14 @@ export default function Portfolio3D() {
         <section
           id="home"
           ref={heroRef}
-          className="min-h-screen lg:h-screen flex items-center justify-center relative px-3 sm:px-4 lg:px-6 pt-16 pb-8 overflow-x-hidden"
+          className="min-h-screen lg:h-screen flex items-center justify-center relative px-3 sm:px-4 lg:px-6 pt-16 pb-8 overflow-x-hidden hero-section"
           style={{ zIndex: 1 }}
         >
           {/* Premium animated background */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/30 rounded-full blur-3xl animate-pulse" />
-            <div className="absolute bottom-0 right-1/4 w-[32rem] h-[32rem] bg-purple-500/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40rem] h-[40rem] bg-pink-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+            <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/30 rounded-full blur-3xl animate-pulse parallax-bg" data-speed="0.05" />
+            <div className="absolute bottom-0 right-1/4 w-[32rem] h-[32rem] bg-purple-500/30 rounded-full blur-3xl animate-pulse parallax-bg" data-speed="0.08" style={{ animationDelay: '1s' }} />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40rem] h-[40rem] bg-pink-500/20 rounded-full blur-3xl animate-pulse parallax-bg" data-speed="0.12" style={{ animationDelay: '2s' }} />
           </div>
 
           <div className="container mx-auto px-3 sm:px-4 relative z-[5] max-w-7xl w-full py-4 lg:py-8">
@@ -618,18 +999,18 @@ export default function Portfolio3D() {
                     className="space-y-3 sm:space-y-4"
                   >
                     {/* Name with AnimatedGradientText */}
-                    <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight">
-                      <AnimatedGradientText>Rodney Naro</AnimatedGradientText>
+                    <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight hero-title hero-name">
+                      <AnimatedGradientText animation="reveal" delay={0.3} stagger={0.04}>Rodney Naro</AnimatedGradientText>
                     </h1>
 
                     {/* Tagline */}
-                    <p className="text-sm sm:text-base lg:text-lg text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-purple-300 to-pink-300 font-semibold">
+                    <p className="text-sm sm:text-base lg:text-lg text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-purple-300 to-pink-300 font-semibold hero-tagline">
                       <span className="scramble-text">{mounted ? "" : "Freebie Techie! Coding as a search!"}</span>
                     </p>
 
                     {/* Description */}
                     <motion.p
-                      className="text-gray-300 text-xs sm:text-sm lg:text-base leading-relaxed"
+                      className="text-gray-300 text-xs sm:text-sm lg:text-base leading-relaxed hero-description"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.6 }}
@@ -640,7 +1021,7 @@ export default function Portfolio3D() {
 
                     {/* CTA Buttons */}
                     <motion.div
-                      className="flex flex-wrap gap-2"
+                      className="flex flex-wrap gap-2 hero-buttons"
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.8 }}
@@ -696,11 +1077,26 @@ export default function Portfolio3D() {
                       >
                         <CVDownload />
                       </motion.div>
+                      
+                      <motion.a
+                        href="/macos"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="relative group"
+                      >
+                        <Button
+                          className="h-9 sm:h-10 px-3 sm:px-4 bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 text-xs sm:text-sm font-semibold shadow-lg shadow-gray-500/50 transition-all duration-300 border border-gray-600"
+                        >
+                          <Terminal className="mr-1.5 h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                          macOS Mode
+                        </Button>
+                        <div className="absolute -inset-0.5 bg-gradient-to-r from-gray-600 to-gray-400 rounded-lg blur opacity-30 group-hover:opacity-60 transition duration-300 -z-10" />
+                      </motion.a>
                     </motion.div>
 
                     {/* Stats inline */}
                     <motion.div
-                      className="grid grid-cols-3 gap-2 pt-2"
+                      className="grid grid-cols-3 gap-2 pt-2 hero-stats"
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 1 }}
@@ -712,7 +1108,7 @@ export default function Portfolio3D() {
                       ].map((stat, idx) => (
                         <div
                           key={stat.label}
-                          className="p-2 sm:p-2.5 text-center bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 hover:border-white/20 transition-all group"
+                          className="p-2 sm:p-2.5 text-center bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 hover:border-white/20 transition-all group hero-stat"
                         >
                           <motion.div
                             initial={{ opacity: 0, scale: 0.5 }}
@@ -881,35 +1277,31 @@ export default function Portfolio3D() {
         </section>
 
         {/* Projects Section with Modern 3D Cards */}
-        <section id="projects" ref={projectsRef} className="py-20 sm:py-24 lg:py-32 relative overflow-hidden" style={{ zIndex: 1 }}>
+        <section id="projects" ref={projectsRef} className="py-20 sm:py-24 lg:py-32 relative overflow-hidden projects-section" style={{ zIndex: 1 }}>
           {/* Background accent */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50rem] h-[50rem] bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50rem] h-[50rem] bg-blue-500/10 rounded-full blur-3xl pointer-events-none parallax-bg" data-speed="0.1" />
           
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-[5]">
             <motion.div
-              className="text-center mb-16"
+              className="text-center mb-16 section-header"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
               <h2 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-4">
-                <AnimatedGradientText>Featured Projects</AnimatedGradientText>
+                <AnimatedGradientText animation="reveal" delay={0.2}>Featured Projects</AnimatedGradientText>
               </h2>
-              <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto">
+              <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto hero-subtitle">
                 Explore my latest work showcasing cutting-edge technologies and innovative solutions
               </p>
             </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
               {projects.map((project, index) => (
-                <motion.div
+                <div
                   key={project.title}
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1, duration: 0.5 }}
-                  viewport={{ once: true }}
-                  className="h-full"
+                  className="h-full project-card"
                 >
                   <TiltCard className="h-full">
                     <GlassCard className="h-full p-6 sm:p-8 group cursor-pointer relative overflow-hidden">
@@ -985,29 +1377,29 @@ export default function Portfolio3D() {
                       </div>
                     </GlassCard>
                   </TiltCard>
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>
         </section>
 
         {/* Skills Section with Modern Circular Progress */}
-        <section id="skills" ref={skillsRef} className="py-20 sm:py-24 lg:py-32 relative overflow-hidden" style={{ zIndex: 1 }}>
+        <section id="skills" ref={skillsRef} className="py-20 sm:py-24 lg:py-32 relative overflow-hidden tech-section" style={{ zIndex: 1 }}>
           {/* Background accent */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60rem] h-[60rem] bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60rem] h-[60rem] bg-purple-500/10 rounded-full blur-3xl pointer-events-none parallax-bg" data-speed="0.15" />
           
           <div className="container mx-auto px-2 sm:px-4 md:px-6 lg:px-8 relative z-[5] max-w-7xl">
             <motion.div
-              className="text-center mb-16"
+              className="text-center mb-16 section-header tech-section-title"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
               <h2 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-4">
-                <AnimatedGradientText>Tech Stack & Skills</AnimatedGradientText>
+                <AnimatedGradientText animation="reveal" delay={0.2}>Tech Stack & Skills</AnimatedGradientText>
               </h2>
-              <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto">
+              <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto hero-subtitle">
                 Expertise across modern web and mobile technologies
               </p>
             </motion.div>
@@ -1016,13 +1408,9 @@ export default function Portfolio3D() {
               {/* Skills Grid with Circular Progress */}
               <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-3 lg:gap-4">
                 {techStack.map((tech, index) => (
-                  <motion.div
+                  <div
                     key={tech.name}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: index * 0.1, duration: 0.5 }}
-                    viewport={{ once: true }}
-                    className="flex justify-center"
+                    className="flex justify-center tech-item"
                   >
                     <a
                       href={tech.url}
@@ -1091,7 +1479,7 @@ export default function Portfolio3D() {
                       </p>
                     </GlassCard>
                     </a>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
 
@@ -1186,22 +1574,22 @@ export default function Portfolio3D() {
         </section>
 
         {/* Contact Section with Premium Design */}
-        <section id="contact" ref={contactRef} className="py-20 sm:py-24 lg:py-32 relative overflow-hidden" style={{ zIndex: 1 }}>
+        <section id="contact" ref={contactRef} className="py-20 sm:py-24 lg:py-32 relative overflow-hidden contact-section" style={{ zIndex: 1 }}>
           {/* Background accent */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70rem] h-[70rem] bg-pink-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70rem] h-[70rem] bg-pink-500/10 rounded-full blur-3xl pointer-events-none parallax-bg" data-speed="0.2" />
           
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-[5]">
             <motion.div
-              className="text-center mb-16"
+              className="text-center mb-16 section-header"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
               <h2 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-4">
-                <AnimatedGradientText>Get In Touch</AnimatedGradientText>
+                <AnimatedGradientText animation="reveal" delay={0.2}>Get In Touch</AnimatedGradientText>
               </h2>
-              <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto">
+              <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto hero-subtitle">
                 Let&apos;s collaborate and build something extraordinary together
               </p>
             </motion.div>
@@ -1240,7 +1628,7 @@ export default function Portfolio3D() {
                     </div>
 
                     <div className="space-y-4">
-                      <GlassCard className="p-4 group hover:scale-[1.02] transition-transform">
+                      <GlassCard className="p-4 group hover:scale-[1.02] transition-transform contact-card">
                         <div className="flex items-center gap-4">
                           <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20">
                             <MapPin className="h-6 w-6 text-blue-400" />
@@ -1252,7 +1640,7 @@ export default function Portfolio3D() {
                         </div>
                       </GlassCard>
 
-                      <GlassCard className="p-4 group hover:scale-[1.02] transition-transform">
+                      <GlassCard className="p-4 group hover:scale-[1.02] transition-transform contact-card">
                         <div className="flex items-center gap-4">
                           <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20">
                             <Mail className="h-6 w-6 text-purple-400" />
@@ -1269,7 +1657,7 @@ export default function Portfolio3D() {
                         </div>
                       </GlassCard>
 
-                      <GlassCard className="p-4 group hover:scale-[1.02] transition-transform">
+                      <GlassCard className="p-4 group hover:scale-[1.02] transition-transform contact-card">
                         <div className="flex items-center gap-4">
                           <div className="p-3 rounded-xl bg-gradient-to-br from-green-500/20 to-emerald-500/20">
                             <Zap className="h-6 w-6 text-green-400" />
@@ -1298,6 +1686,7 @@ export default function Portfolio3D() {
                         href="https://github.com/rodnar123"
                         target="_blank"
                         rel="noopener noreferrer"
+                        className="social-btn"
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                       >
@@ -1315,6 +1704,7 @@ export default function Portfolio3D() {
                         href="https://www.linkedin.com/in/rodney-naro-74378062/"
                         target="_blank"
                         rel="noopener noreferrer"
+                        className="social-btn"
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                       >
@@ -1332,6 +1722,7 @@ export default function Portfolio3D() {
                         href="https://www.facebook.com/rodney.naro.965"
                         target="_blank"
                         rel="noopener noreferrer"
+                        className="social-btn"
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                       >
@@ -1356,6 +1747,7 @@ export default function Portfolio3D() {
 
                       <motion.a
                         href="mailto:rodney.naro@gmail.com"
+                        className="social-btn"
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                       >
@@ -1385,27 +1777,28 @@ export default function Portfolio3D() {
         </section>
 
         {/* Footer with animations */}
-        <footer className="py-12 border-t border-gray-800/50 relative overflow-hidden">
+        <footer className="py-12 border-t border-gray-800/50 relative overflow-hidden footer-section">
           <div className="absolute inset-0 bg-gradient-to-t from-blue-500/5 to-transparent" />
           <div className="container mx-auto px-4 text-center relative">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
+              className="footer-content"
             >
               <p className="text-gray-400 mb-4">
                 © 2025 Rodney Naro. Crafted with passion using Next.js, Three.js, GSAP & Framer Motion
               </p>
               <div className="flex items-center justify-center gap-4 text-sm text-gray-500">
-                <span className="flex items-center gap-1">
+                <span className="flex items-center gap-1 footer-icon">
                   <Cpu className="h-4 w-4" />
                   High Performance
                 </span>
-                <span className="flex items-center gap-1">
+                <span className="flex items-center gap-1 footer-icon">
                   <Shield className="h-4 w-4" />
                   Secure
                 </span>
-                <span className="flex items-center gap-1">
+                <span className="flex items-center gap-1 footer-icon">
                   <Zap className="h-4 w-4" />
                   Lightning Fast
                 </span>
